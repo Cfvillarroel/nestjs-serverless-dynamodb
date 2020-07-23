@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/createOrder.dto';
 import { OrderRepository } from '../../repositories/order.repository';
 
