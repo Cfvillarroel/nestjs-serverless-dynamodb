@@ -1,0 +1,39 @@
+service:
+    name: aws-nestjs-dynamodb
+
+plugins:
+    - serverless-plugin-typescript
+    - serverless-plugin-optimize
+    - serverless-offline
+
+provider:
+    name: aws
+    tracing:
+        apiGateway: true
+    runtime: nodejs12.x
+    memorySize: 256
+    stage: ${opt:stage, 'dev'}
+    region: us-east-1
+    environment:
+        ORDERS_TABLE_NAME: ${self:custom.OrdersTable.name}
+    iamRoleStatements:
+        - ${file(iam/OrdersTableIAM.yml):OrdersTableIAM}
+
+package:
+    individually: true
+
+resources:
+    Resources:
+        OrdersTable: ${file(resources/Orderstable.yml):OrdersTable}
+
+functions:
+    main:
+        handler: src/main.handler
+        events:
+            - http:
+                  method: any
+                  path: /{proxy+}
+custom:
+    OrdersTable:
+        name: !Ref OrdersTable
+        arn: !GetAtt OrdersTable.Arn
